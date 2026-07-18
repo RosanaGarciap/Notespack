@@ -71,6 +71,7 @@ section.events-section {
     background-repeat: no-repeat;
     background-position: right 0.9rem center;
     padding-right: 2.2rem;
+    color-scheme: dark; 
 }
 
 .filters input.form-control {
@@ -136,4 +137,9 @@ section.events-section {
     padding: 2rem;
     text-align: center;
     color: rgba(255, 255, 255, 0.75);
+}
+
+.filters select.form-control option {
+    background-color: #1a112e important! ;
+    color: white;
 }

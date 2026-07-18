@@ -240,8 +240,6 @@ C:\Users\Rosana G\Downloads\Notespack-\Notespack\Notespack\obj\Debug\net10.0\com
 C:\Users\Rosana G\Downloads\Notespack-\Notespack\Notespack\obj\Debug\net10.0\compressed\sfvniqe4a5-{0}-cyz5k529gx-cyz5k529gx.gz
 C:\Users\Rosana G\Downloads\Notespack-\Notespack\Notespack\obj\Debug\net10.0\compressed\agfblzfse2-{0}-ne14ti1q68-ne14ti1q68.gz
 C:\Users\Rosana G\Downloads\Notespack-\Notespack\Notespack\obj\Debug\net10.0\compressed\oybx0deufl-{0}-ig5xotzpx5-ig5xotzpx5.gz
-C:\Users\Rosana G\Downloads\Notespack-\Notespack\Notespack\obj\Debug\net10.0\compressed\fcr566a7va-{0}-kvzy3g02zl-kvzy3g02zl.gz
-C:\Users\Rosana G\Downloads\Notespack-\Notespack\Notespack\obj\Debug\net10.0\compressed\aajwarj1uv-{0}-kvzy3g02zl-kvzy3g02zl.gz
 C:\Users\Rosana G\Downloads\Notespack-\Notespack\Notespack\obj\Debug\net10.0\staticwebassets.build.json
 C:\Users\Rosana G\Downloads\Notespack-\Notespack\Notespack\obj\Debug\net10.0\staticwebassets.build.json.cache
 C:\Users\Rosana G\Downloads\Notespack-\Notespack\Notespack\obj\Debug\net10.0\staticwebassets.development.json
@@ -253,3 +251,6 @@ C:\Users\Rosana G\Downloads\Notespack-\Notespack\Notespack\obj\Debug\net10.0\ref
 C:\Users\Rosana G\Downloads\Notespack-\Notespack\Notespack\obj\Debug\net10.0\Notespack.pdb
 C:\Users\Rosana G\Downloads\Notespack-\Notespack\Notespack\obj\Debug\net10.0\Notespack.genruntimeconfig.cache
 C:\Users\Rosana G\Downloads\Notespack-\Notespack\Notespack\obj\Debug\net10.0\ref\Notespack.dll
+C:\Users\Rosana G\Downloads\Notespack-\Notespack\Notespack\obj\Debug\net10.0\Notespack.sourcelink.json
+C:\Users\Rosana G\Downloads\Notespack-\Notespack\Notespack\obj\Debug\net10.0\compressed\fcr566a7va-{0}-knzav3hw94-knzav3hw94.gz
+C:\Users\Rosana G\Downloads\Notespack-\Notespack\Notespack\obj\Debug\net10.0\compressed\aajwarj1uv-{0}-knzav3hw94-knzav3hw94.gz

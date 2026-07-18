@@ -19,7 +19,7 @@
             <div class="filters" style="display: flex; gap: 1rem;">
                 <select @onchange="OnMonthChanged" class="form-control">
                     @for (int i = 1; i <= 12; i++) {
-                        <option value="@i" selected="@(i == currentMonth)">@System.Globalization.DateTimeFormatInfo.CurrentInfo.GetMonthName(i)</option>
+                        <option style="background-color: #1a112e; color: white;" value="@i" selected="@(i == currentMonth)">@System.Globalization.DateTimeFormatInfo.CurrentInfo.GetMonthName(i)</option>
                     }
                 </select>
                 <input type="number" value="@currentYear" @onchange="OnYearChanged" class="form-control" style="width: 100px;" />

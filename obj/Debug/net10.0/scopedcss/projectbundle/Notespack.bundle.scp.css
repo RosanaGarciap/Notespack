@@ -192,6 +192,7 @@ section.events-section[b-0ed7mbfi1z] {
     background-repeat: no-repeat;
     background-position: right 0.9rem center;
     padding-right: 2.2rem;
+    color-scheme: dark; 
 }
 
 .filters input.form-control[b-0ed7mbfi1z] {
@@ -257,6 +258,11 @@ section.events-section[b-0ed7mbfi1z] {
     padding: 2rem;
     text-align: center;
     color: rgba(255, 255, 255, 0.75);
+}
+
+.filters select.form-control option[b-0ed7mbfi1z] {
+    background-color: #1a112e important! ;
+    color: white;
 }
 /* /Components/Pages/Home.razor.rz.scp.css */
 /* ==========================================================================
