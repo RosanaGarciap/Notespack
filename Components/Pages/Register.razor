@@ -1,0 +1,118 @@
+@page "/register"
+@rendermode InteractiveServer
+@using System.ComponentModel.DataAnnotations
+@inject NOTESPACK.Services.AuthService AuthService
+@inject NavigationManager NavigationManager
+
+
+<div class="register-page-layout">
+    <div class="glass-card form-container tilt-card">
+        <div class="form-header">
+            <h2>Create Account</h2>
+            <p class="text-dim">Join the NOTESPACK community to manage your events.</p>
+        </div>
+
+        <div class="form-message-slot @(string.IsNullOrEmpty(Message) ? "" : (IsError ? "form-message-error" : "form-message-success"))">
+            @Message
+        </div>
+
+        <EditForm Model="RegisterModel" OnValidSubmit="HandleRegister" FormName="RegisterForm">
+            <DataAnnotationsValidator />
+            <AntiforgeryToken />
+
+            <div class="form-group">
+                <label class="form-label">Email Address</label>
+                <InputText @bind-Value="RegisterModel.Email" class="form-input" placeholder="student@university.edu" />
+                <ValidationMessage For="@(() => RegisterModel.Email)" />
+            </div>
+
+            <div class="form-group" style="margin-top: 15px; position: relative;">
+
+                <div style="position: relative;">
+                    <label class="form-label">Password</label>
+                    <InputText type="@(showPassword ? "text" : "password")" @bind-Value="RegisterModel.Password" class="form-input" placeholder="*********" />
+                    <button type="button" @onclick="TogglePassword" @onclick:preventDefault="true" class="eye-toggle eye-btn" aria-label="Toggle password visibility" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer;">
+                    @if (showPassword)
+                    {
+                        <!-- Open eye -->
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                            <circle cx="12" cy="12" r="3" />
+                        </svg>
+                    }
+                    else
+                    {
+                        <!-- Closed eye / striked -->
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M17.94 17.94A10.94 10.94 0 0 1 12 20c-7 0-11-8-11-8a18.5 18.5 0 0 1 5.06-5.94M9.9 4.24A10.94 10.94 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19M14.12 14.12a3 3 0 1 1-4.24-4.24" />
+                            <line x1="1" y1="1" x2="23" y2="23" />
+                        </svg>
+                    }
+                    </button>
+                </div>
+                <ValidationMessage For="@(() => RegisterModel.Password)" />
+            </div>
+
+            <div class="form-group" style="margin-top: 15px;">
+                <label class="form-label">Confirm Password</label>
+                <InputText type="@(showPassword ? "text" : "password")" @bind-Value="RegisterModel.ConfirmPassword" class="form-input" placeholder="••••••••" />
+                <ValidationMessage For="@(() => RegisterModel.ConfirmPassword)" />
+            </div>
+
+            <button type="submit" class="btn-primary" style="width: 100%; margin-top: 20px; color: white; font-weight: bold; font-size: 16px;">
+                Register
+            </button>
+            <p>Already have an account? <a href="/login" style="color: var(--accent);">Login here</a></p>
+        </EditForm>
+    </div>
+
+    <div class="password-requirements-panel">
+        <ol>
+            <li>The password must be at least 12 characters long.</li>
+            <li>Include uppercase letters (A-Z).</li>
+            <li>Include lowercase letters (a-z).</li>
+            <li>Numbers (0-9).</li>
+            <li>Special characters (# $ % . & * + - =).</li>
+        </ol>
+    </div>
+</div>
+
+@code 
+{
+    private RegisterInput RegisterModel = new();
+    private string Message = string.Empty;
+    private bool IsError = false;
+    private bool showPassword = false;
+
+    private void TogglePassword() => showPassword = !showPassword;
+
+    private async Task HandleRegister()
+    {
+        Message = string.Empty;
+        IsError = false;
+
+        bool registroExitoso = await AuthService.RegisterAsync(RegisterModel.Email, RegisterModel.Password);
+
+        if (registroExitoso)
+        {
+            Message = "Registration successful! Redirecting to login...";
+            await Task.Delay(2000); 
+            NavigationManager.NavigateTo("/login");
+        }
+        else
+        {
+            Message = "This email is already registered.";
+            IsError = true;
+        }
+    }
+
+    public class RegisterInput
+    {
+        [Required, EmailAddress]
+        public string Email { get; set; } = "";
+        [Required, PasswordComplexity]
+        public string Password { get; set; } = "";        
+        [Required, Compare("Password", ErrorMessage = "Passwords do not match.")]
+        public string ConfirmPassword { get; set; } = "";
+    }
+}

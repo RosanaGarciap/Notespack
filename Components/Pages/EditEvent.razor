@@ -1,0 +1,326 @@
+@page "/event/edit/{EventId:int}"
+@using NOTESPACK.Models
+@using NOTESPACK.Services
+@using Microsoft.AspNetCore.Components.Authorization
+@rendermode InteractiveServer
+
+@inject EventService EventService
+@inject AuthenticationStateProvider AuthStateProvider
+@inject NavigationManager Navigation
+
+<div class="edit-event-page">
+    <div class="main-container">
+        <div class="page-header">
+            <h1>Edit Event</h1>
+        </div>
+
+        @if (EventModel == null)
+        {
+            <p>Loading event details...</p>
+        }
+        else
+        {
+            <div class="edit-event-page">
+                <div class="cursor-glow" id="cursorGlow"></div>
+
+                <div class="main-container">
+                    <!-- Main Form -->
+                    <div class="glass-card form-container tilt-card">
+                        <EditForm Model="EventModel" OnValidSubmit="HandleSave">
+                            <DataAnnotationsValidator />
+                            <ValidationSummary />
+
+                            <!-- Event Title -->
+                            <div class="form-group">
+                                <label class="form-label" for="eventTitle">Event Title</label>
+                                <InputText @bind-Value="EventModel.Title" class="form-input" id="eventTitle"/>
+                            </div>
+
+                            <!-- Description -->
+                            <div class="form-group">
+                                <label class="form-label" for="description">Description</label>
+                                <InputTextArea @bind-Value="EventModel.Description" class="form-input" id="description"/>
+                            </div>
+
+                            <!-- Date & Time -->
+                            <div class="form-row">
+                                <div class="form-group flex-1">
+                                    <label class="form-label" for="startDate">Start Date</label>
+                                    <InputDate @bind-Value="EventModel.Date" class="form-input" id="startDate"/>
+                                </div>
+                                <div class="form-group flex-1">
+                                    <label class="form-label" for="endDate">End Date</label>
+                                    <InputDate @bind-Value="EventModel.EndDate" class="form-input" id="endDate"/>
+                                </div>
+                                <div class="form-group flex-1">
+                                    <label class="form-label" for="timespan">Event Duration</label>
+                                    <InputTextArea @bind-Value="EventModel.Duration" class="form-input" id="timespan" placeholder="e.g. 2 hours"/>
+                                </div>
+                            </div>
+
+                            <!-- Location -->
+                            <div class="form-group">
+                                <label class="form-label" for="address">Address / Location</label>
+                                <InputTextArea @bind-Value="EventModel.Location" class="form-input" id="address"/>
+                            </div>
+
+                            <!-- Organizer -->
+                            <div class="form-group">
+                                <label class="form-label" for="organizer">Organizer Name</label>
+                                <InputTextArea @bind-Value="EventModel.Organizer" class="form-input" id="organizer"/>
+                            </div>
+
+                            <!-- Action Buttons -->
+                            <div class="action-buttons">
+                                <button type="submit" class="btn-submit btn-primary">Save Changes</button>
+                                <NavLink href="my-events" class="btn-secondary">Cancel</NavLink>
+                            </div>
+                        </EditForm>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<style>
+    :root {
+        --cyan: #00E5FF;
+        --purple: #7B5EFF;
+    }
+
+    .edit-event-page {
+        min-height: 100vh;
+        color: white;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        padding: 3rem 1rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .main-container {
+        max-width: 780px;
+        margin: 0 auto;
+    }
+
+    .page-header h1 {
+        font-size: clamp(2rem, 5vw, 2.75rem);
+        font-weight: 700;
+        color: var(--cyan);
+        text-align: center;
+        margin-bottom: 2rem;
+        text-shadow: 0 4px 12px rgba(0, 229, 255, 0.2);
+    }
+
+    .cursor-glow {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(0, 229, 255, 0.25) 20%, transparent 70%);
+        pointer-events: none;
+        z-index: 99999;
+        mix-blend-mode: screen;
+        opacity: 0.7;
+        display: none;
+    }
+
+    .glass-card {
+        background: rgba(26, 17, 46, 0.8);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(123, 94, 255, 0.4);
+        border-radius: 24px;
+        padding: 2.5rem;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .glass-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 25px 50px -10px rgba(0, 229, 255, 0.15);
+    }
+
+    .form-group {
+        margin-bottom: 1.75rem;
+    }
+
+    .form-label {
+        display: block;
+        color: var(--cyan);
+        font-size: 0.95rem;
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .form-input,
+    .form-textarea {
+        width: 100%;
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(123, 94, 255, 0.35);
+        border-radius: 12px;
+        padding: 0.9rem 1.1rem;
+        color: white;
+        font-size: 1.05rem;
+        transition: all 0.2s ease;
+    }
+
+    .form-input:focus,
+    .form-textarea:focus {
+        outline: 3px solid var(--cyan);
+        outline-offset: 4px;
+        border-color: var(--cyan);
+    }
+
+    .form-textarea {
+        resize: vertical;
+        min-height: 140px;
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 1.25rem;
+    }
+
+    .toggle-input {
+        display: none;
+    }
+
+    .action-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        justify-content: center;
+        margin-top: 2rem;
+    }
+
+    .btn-primary,
+    .btn-secondary,
+    .btn-danger {
+        padding: 1rem 2.25rem;
+        border-radius: 9999px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        flex: 1;
+        min-width: 160px;
+    }
+
+    .btn-primary {
+        background: linear-gradient(to right, var(--cyan), var(--purple));
+        color: #000;
+        border: none;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(0, 229, 255, 0.4);
+    }
+
+    .btn-secondary {
+        text-align: center;
+        background: transparent;
+        border: 1px solid rgba(123, 94, 255, 0.6);
+        color: white;
+    }
+
+    .btn-secondary:hover {
+        background: rgba(255, 255, 255, 0.08);
+        border-color: var(--cyan);
+    }
+
+    .btn-danger {
+        background: transparent;
+        border: 1px solid #EF4444;
+        color: #FCA5A5;
+    }
+
+    .btn-danger:hover {
+        background: #EF4444;
+        color: white;
+    }
+
+    .tilt-card {
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    button:focus,
+    input:focus,
+    textarea:focus {
+        outline: 3px solid var(--cyan);
+        outline-offset: 4px;
+    }
+
+    @@media (pointer: fine) {
+        .cursor-glow {
+            display: block;
+        }
+    }
+
+    @@media (max-width: 900px) {
+        .glass-card {
+            padding: 2rem;
+        }
+    }
+
+    @@media (max-width: 640px) {
+        .edit-event-page {
+            padding: 1.5rem 1rem;
+        }
+
+        .action-buttons {
+            flex-direction: column;
+        }
+
+        .tickets-row {
+            flex-direction: column;
+            align-items: stretch;
+        }
+    }
+</style>
+
+@code
+{
+    [Parameter] public int EventId { get; set; }
+    private Event? EventModel { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var userIdString = authState.User.FindFirst("UserId")?.Value;
+
+        if (int.TryParse(userIdString, out int userId))
+        {
+            var events = await EventService.GetEventsByUserIdAsync(userId);
+            EventModel = events.FirstOrDefault(e => e.Id == EventId);
+
+            if (EventModel == null)
+            {
+                Navigation.NavigateTo("/my-events");
+            }
+        }
+        else
+        {
+            Navigation.NavigateTo("/login");
+        }
+    }
+
+    private async Task HandleSave()
+    {
+        if (EventModel == null) return;
+
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var userIdString = authState.User.FindFirst("UserId")?.Value;
+
+        if (int.TryParse(userIdString, out int userId))
+        {
+            await EventService.UpdateEventAsync(EventModel, userId);
+
+            Navigation.NavigateTo("/my-events");
+        }
+    }
+}

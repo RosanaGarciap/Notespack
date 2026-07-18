@@ -1,0 +1,266 @@
+@page "/event/delete/{Id:int}"
+@using NOTESPACK.Models
+@using NOTESPACK.Data
+@using Microsoft.EntityFrameworkCore
+@inject IDbContextFactory<EventContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<h3>Delete Event</h3>
+
+@if (eventToDelete == null)
+{
+    <p><em>Loading event...</em></p>
+}
+else
+{
+    <div class="delete-event-page">
+        <div class="cursor-glow" id="cursorGlow"></div>
+
+        <div class="main-container">
+            <div class="page-header">
+                <h1>Delete Event</h1>
+            </div>
+
+            <div class="glass-card form-container tilt-card">
+                @if (eventToDelete == null)
+                {
+                    <p class="text-white-50">Loading event...</p>
+                }
+                else
+                {
+                    <div class="confirmation-content">
+                        <div class="warning-icon">⚠️</div>
+
+                        <h3 class="confirmation-title">Are you sure you want to delete this event?</h3>
+
+                        <div class="event-preview glass-card">
+                            <p class="event-info"><strong>Title:</strong> @eventToDelete.Title</p>
+                            <p class="event-info"><strong>Description:</strong> @eventToDelete.Description</p>
+                        </div>
+
+                        <div class="alert-warning">
+                            <strong>This action cannot be undone.</strong>
+                        </div>
+
+                        <div class="action-buttons">
+                            <button class="btn-danger" @onclick="ConfirmDelete">
+                                Yes, Delete Event
+                            </button>
+                            <button class="btn-secondary" @onclick="Cancel">
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+}
+
+<style>
+    :root {
+        --cyan: #00E5FF;
+        --purple: #7B5EFF;
+    }
+
+    .delete-event-page {
+        min-height: 100vh;
+        background: linear-gradient(135deg, #0A0A2A 0%, #1A0033 50%, #0A0A2A 100%);
+        color: white;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        padding: 3rem 1rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .main-container {
+        max-width: 780px;
+        margin: 0 auto;
+    }
+
+    .page-header h1 {
+        font-size: clamp(2rem, 5vw, 2.75rem);
+        font-weight: 700;
+        color: var(--cyan);
+        text-align: center;
+        margin-bottom: 2.5rem;
+        text-shadow: 0 4px 12px rgba(0, 229, 255, 0.2);
+    }
+
+    .cursor-glow {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(0, 229, 255, 0.25) 20%, transparent 70%);
+        pointer-events: none;
+        z-index: 99999;
+        mix-blend-mode: screen;
+        opacity: 0.7;
+        display: none;
+    }
+
+    .glass-card {
+        background: rgba(26, 17, 46, 0.85);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(123, 94, 255, 0.4);
+        border-radius: 24px;
+        padding: 2.5rem;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .glass-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 25px 50px -10px rgba(0, 229, 255, 0.15);
+    }
+
+    .confirmation-content {
+        text-align: center;
+    }
+
+    .warning-icon {
+        font-size: 4rem;
+        margin-bottom: 1.5rem;
+        display: block;
+    }
+
+    .confirmation-title {
+        color: #F87171;
+        font-size: 1.75rem;
+        margin-bottom: 2rem;
+        font-weight: 600;
+    }
+
+    .event-preview {
+        text-align: left;
+        margin: 2rem 0;
+        padding: 1.5rem;
+        background: rgba(0, 0, 0, 0.3);
+        border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+
+    .event-preview p,
+    .event-info strong {
+        font-size: 1.1em;
+        margin-bottom: 0.75rem;
+        color: #E5E7EB;
+    }
+
+    .alert-warning {
+        background: rgba(239, 68, 68, 0.15);
+        border: 1px solid #EF4444;
+        color: #FCA5A5;
+        padding: 1rem;
+        border-radius: 12px;
+        margin: 1.5rem 0;
+        font-size: 1.05rem;
+    }
+
+    .action-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        justify-content: center;
+        margin-top: 2rem;
+    }
+
+    .btn-danger,
+    .btn-secondary {
+        padding: 1rem 2.25rem;
+        border-radius: 9999px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        flex: 1;
+        min-width: 160px;
+    }
+
+    .btn-danger {
+        background: linear-gradient(to right, #EF4444, #B91C1C);
+        color: white;
+        border: none;
+    }
+
+    .btn-danger:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(239, 68, 68, 0.4);
+    }
+
+    .btn-secondary {
+        background: transparent;
+        border: 1px solid rgba(123, 94, 255, 0.6);
+        color: white;
+    }
+
+    .btn-secondary:hover {
+        background: rgba(255, 255, 255, 0.08);
+        border-color: var(--cyan);
+    }
+
+    .tilt-card {
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    button:focus,
+    input:focus,
+    textarea:focus {
+        outline: 3px solid var(--cyan);
+        outline-offset: 4px;
+    }
+
+    @@media (pointer: fine) {
+        .cursor-glow {
+            display: block;
+        }
+    }
+
+    @@media (max-width: 640px) {
+        .delete-event-page {
+            padding: 1.5rem 1rem;
+        }
+
+        .action-buttons {
+            flex-direction: column;
+        }
+
+        .glass-card {
+            padding: 2rem;
+        }
+    }
+</style>
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    private Event? eventToDelete;
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = await DbFactory.CreateDbContextAsync();
+        eventToDelete = await context.Events.FindAsync(Id);
+
+        if (eventToDelete == null)
+        {
+            NavigationManager.NavigateTo("/my-events");
+        }
+    }
+
+    private async Task ConfirmDelete()
+    {
+        if (eventToDelete == null) return;
+
+        using var context = await DbFactory.CreateDbContextAsync();
+        context.Events.Remove(eventToDelete);
+        await context.SaveChangesAsync();
+        NavigationManager.NavigateTo("/my-events");
+    }
+
+    private void Cancel()
+    {
+        NavigationManager.NavigateTo("/my-events");
+    }
+}

@@ -1,0 +1,42 @@
+@using NOTESPACK.Models
+@using System.Text.RegularExpressions
+
+<article class="glass-card event-card">
+
+    @if (HeaderActions != null)
+    {
+        <div class="event-header-actions">
+            @HeaderActions
+        </div>
+    }
+
+    <div class="event-cover">
+        <div class="event-date-badge">
+            <span class="d">@EventItem.Date.ToString("dd")</span>
+            <span class="m">@EventItem.Date.ToString("MMM")</span>
+        </div>
+    </div>
+
+    <div class="event-body">
+        <h3>@EventItem.Title</h3>
+        <p class="card-loc-text">
+            <span class="pin">◉</span> @(EventItem.Location ?? "No location provided")
+        </p>
+        <p class="card-desc-text">
+            @((MarkupString)TruncateDescription(StripHtml(EventItem.Description), 100))
+        </p>
+    </div>
+
+    <div class="event-footer">
+        @FooterActions
+    </div>
+</article>
+
+@code {
+    [Parameter, EditorRequired] public Event EventItem { get; set; } = default!;
+    [Parameter] public RenderFragment? HeaderActions { get; set; }
+    [Parameter] public RenderFragment? FooterActions { get; set; }
+
+    private string StripHtml(string input) => string.IsNullOrEmpty(input) ? "" : Regex.Replace(input, "<.*?>", String.Empty);
+    private string TruncateDescription(string text, int length) => text.Length > length ? text.Substring(0, length) + "..." : text;
+}

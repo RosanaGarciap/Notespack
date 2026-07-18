@@ -1,0 +1,84 @@
+@page "/campus-events"
+@using NOTESPACK.Models
+@using NOTESPACK.Services
+@using System.Text.RegularExpressions
+@inject EventService EventService
+@inject Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider AuthStateProvider
+@inject NavigationManager Navigation
+
+<PageTitle>Campus Events · Notespack</PageTitle>
+
+<section class="events-section">
+    <div class="container-x">
+        <div class="events-header">
+            <div>
+                <span class="eyebrow" style="color: #aaa; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;">Official Campus Events</span>
+                <h2>BYU Events</h2>
+            </div>
+            
+            <div class="filters" style="display: flex; gap: 1rem;">
+                <select @onchange="OnMonthChanged" class="form-control">
+                    @for (int i = 1; i <= 12; i++) {
+                        <option value="@i" selected="@(i == currentMonth)">@System.Globalization.DateTimeFormatInfo.CurrentInfo.GetMonthName(i)</option>
+                    }
+                </select>
+                <input type="number" value="@currentYear" @onchange="OnYearChanged" class="form-control" style="width: 100px;" />
+            </div>
+        </div>
+
+        @if (eventList == null) {
+            <p>Loading...</p>
+        }
+        else if (!eventList.Any()) {
+            <div class="glass-card"><p>No events found for this selection.</p></div>
+        }
+        else {
+            <div class="grid-2 event-grid">
+                @foreach (var item in eventList) {
+                    <EventCard EventItem="item">
+                        <FooterActions>
+                            <a href="/event/details/@item.Id" class="btn btn-info">View Details</a>
+                            <button @onclick="() => AddToMyEvents(item.Id)" class="btn btn-success">
+                                Add to My Events
+                            </button>
+                        </FooterActions>
+                    </EventCard>
+                }
+            </div>
+        }
+    </div>
+</section>
+
+@code {
+    private List<Event>? eventList;
+    private int currentMonth = DateTime.Now.Month;
+    private int currentYear = DateTime.Now.Year;
+
+    protected override async Task OnInitializedAsync() => await LoadEvents();
+
+    private async Task LoadEvents() => eventList = await EventService.GetEventsByMonthAsync(currentYear, currentMonth);
+
+    private async Task OnMonthChanged(ChangeEventArgs e) {
+        currentMonth = int.Parse(e.Value?.ToString() ?? "1");
+        await LoadEvents();
+    }
+
+    private async Task OnYearChanged(ChangeEventArgs e) {
+        if (int.TryParse(e.Value?.ToString(), out int y)) { currentYear = y; await LoadEvents(); }
+    }
+
+    private string StripHtml(string input) => string.IsNullOrEmpty(input) ? "" : Regex.Replace(input, "<.*?>", String.Empty);
+    private string TruncateDescription(string text, int length) => text.Length > length ? text.Substring(0, length) + "..." : text;
+    private async Task AddToMyEvents(int eventId)
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var userIdString = authState.User.FindFirst("UserId")?.Value;
+
+        if (int.TryParse(userIdString, out int userId))
+        {
+            await EventService.AddCampusEventToUserAsync(eventId, userId);
+            
+            Navigation.NavigateTo("/my-events");
+        }
+    }
+}

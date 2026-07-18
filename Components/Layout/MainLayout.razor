@@ -1,0 +1,79 @@
+﻿@using Microsoft.AspNetCore.Components.Authorization
+@inherits LayoutComponentBase
+
+<CascadingAuthenticationState>
+
+    <AuthorizeView>
+        <Authorized>
+            <IdleSessionWatcher />
+        </Authorized>
+    </AuthorizeView>
+    
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header >
+        <NavMenu />
+    </header>
+
+    <main id="main" role="main">
+        @Body
+    </main>
+
+</CascadingAuthenticationState>
+
+<footer class="np-footer">
+    <div class="np-footer-grad" aria-hidden="true"></div>
+    <div class="np-footer-inner">
+        <div class="np-footer-grid">
+            <div class="np-foot-brand">
+                <a class="np-brand" href="" aria-label="Notespack home">
+                    <span class="np-logo-frame">
+                        <img src="img/NPlogo.png" alt="Notespack" class="np-logo" />
+                    </span>
+                    <span class="np-brand-text">Notespack</span>
+                </a>
+                <p class="np-foot-tag">Every campus event, in one place. Built by students for students.</p>
+                <div class="np-foot-social" aria-label="Social links">
+                    <a href="#" aria-label="Instagram" class="np-soc">◐</a>
+                    <a href="#" aria-label="Twitter" class="np-soc">✕</a>
+                    <a href="#" aria-label="GitHub" class="np-soc">◆</a>
+                    <a href="#" aria-label="LinkedIn" class="np-soc">▣</a>
+                </div>
+            </div>
+
+            <div class="np-foot-col">
+                <h4>Product</h4>
+                <a href="#events">Browse events</a>
+                <a href="#">Create event</a>
+                <a href="#how">How it works</a>
+                <a href="#">Roadmap</a>
+            </div>
+
+            <div class="np-foot-col">
+                <h4>For students</h4>
+                <a href="#">Get started</a>
+                <a href="#">Campus orgs</a>
+                <a href="#">Help center</a>
+                <a href="#">Community</a>
+            </div>
+
+            <div class="np-foot-col">
+                <h4>Company</h4>
+                <a href="#">About</a>
+                <a href="#">Privacy</a>
+                <a href="#">Terms</a>
+                <a href="#">Contact</a>
+            </div>
+        </div>
+
+        <div class="np-foot-bottom">
+            <span>© 2026 Notespack · Built by The Syntax Errors</span>
+            <span class="np-foot-built">Crafted at BYU Idaho · CSE 325</span>
+        </div>
+    </div>
+</footer>
+
+<div id="blazor-error-ui" data-nosnippet>
+    An unhandled error has occurred.
+    <a href="." class="reload">Reload</a>
+    <span class="dismiss">🗙</span>
+</div>

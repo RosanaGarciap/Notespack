@@ -1,0 +1,302 @@
+﻿@page "/"
+@using Notespack.Models
+@using Microsoft.EntityFrameworkCore
+@using Radzen
+@using NOTESPACK.Data
+@inject EventContext Context
+@inject IJSRuntime JS
+@rendermode InteractiveServer 
+
+<PageTitle>Home - Notespack</PageTitle>
+
+<section class="hero">
+    <div class="blob blob-violet blob-1"></div>
+    <div class="blob blob-cyan blob-2"></div>
+    <div class="blob blob-pink blob-3"></div>
+
+    <div class="hero-inner">
+        <span class="eyebrow">For college students</span>
+        <h1>
+            <span data-split>Every campus event,</span>
+            <br />
+            <span class="grad-text grad-line">in one place.</span>
+        </h1>
+        <p class="lede">
+            Notespack helps you discover, create, and manage events across your campus
+            without juggling group chats, flyers, and a dozen tabs.
+        </p>
+        <div class="hero-actions">
+            <a class="btn-pill btn-primary-pill" href="#events">Explore events</a>
+            <a class="btn-pill btn-ghost-pill" href="#how">See how it works</a>
+        </div>
+
+        <div class="trust-row">
+            <span>Built for students</span>
+            <span>Mobile friendly</span>
+            <span>WCAG 2.1 AA</span>
+        </div>
+    </div>
+
+    <div class="scroll-cue" aria-hidden="true">
+        <span>Scroll</span>
+        <span class="line"></span>
+    </div>
+</section>
+
+<div class="marquee" aria-hidden="true">
+    <div class="marquee-track">
+        @* Renderizado dinámico del texto de la marquesina *@
+        @for (int i = 0; i < 2; i++)
+        {
+            @foreach (var item in _marqueeItems)
+            {
+                <span>@item</span>
+            }
+        }
+    </div>
+</div>
+
+<section class="section section-tight">
+    <div class="container-x">
+        <div class="cat-ribbon reveal" role="tablist" aria-label="Event categories">
+            @foreach (var cat in _categories)
+            {
+                <button class="cat-pill @(cat.Id == _selectedCategoryId ? "is-active" : "")" 
+                        type="button" 
+                        role="tab"
+                        aria-pressed="@(cat.Id == _selectedCategoryId ? "true" : "false")"
+                        @onclick="() => SelectCategory(cat.Id)">
+                    <span class="cat-ico">@cat.Icon</span>@cat.Name
+                </button>
+            }
+        </div>
+    </div>
+</section>
+
+
+<section class="section">
+    <div class="container-x">
+        <div style="text-align:center; max-width: 720px; margin: 0 auto 56px;">
+            <span class="eyebrow">Why Notespack</span>
+            <h2>Built for the way students actually plan</h2>
+            <p>Lightweight, fast, and made for campus life. Just the tools you need to find what's happening and run your own events.</p>
+        </div>
+
+        <div class="grid-3 reveal-stagger">
+            <div class="glass-card reveal" data-tilt>
+                <div class="card-icon">◎</div>
+                <h3>Discover events</h3>
+                <p>Browse what's happening this week, filter by category, and never miss the things you care about.</p>
+            </div>
+            <div class="glass-card reveal" data-tilt>
+                <div class="card-icon">✦</div>
+                <h3>Create in seconds</h3>
+                <p>Set up an event with a clean form. Add details, dates, and location without the friction.</p>
+            </div>
+            <div class="glass-card reveal" data-tilt>
+                <div class="card-icon">⌘</div>
+                <h3>Manage with ease</h3>
+                <p>Edit, update, or cancel any event you own. Everything you've planned is one click away.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container-x">
+        <div class="stat-strip reveal">
+            <div class="stat">
+                <span class="num"><span data-count="2400" data-suffix="+">0</span></span>
+                <span class="lbl">Events posted</span>
+            </div>
+            <div class="stat">
+                <span class="num"><span data-count="18">0</span></span>
+                <span class="lbl">Campus orgs</span>
+            </div>
+            <div class="stat">
+                <span class="num"><span data-count="9000" data-suffix="+">0</span></span>
+                <span class="lbl">Students reached</span>
+            </div>
+            <div class="stat">
+                <span class="num"><span data-count="5">0</span></span>
+                <span class="lbl">Campuses</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section" id="events">
+    <div class="container-x">
+        <div style="display:flex; align-items:end; justify-content:space-between; flex-wrap:wrap; gap:16px; margin-bottom:40px;">
+            <div>
+                <span class="eyebrow">Featured</span>
+                <h2 style="margin:0;">Happening on campus</h2>
+            </div>
+            <a class="btn-pill btn-ghost-pill" href="#">View all events</a>
+        </div>
+
+        <div class="grid-3 reveal-stagger event-grid">
+            @foreach (var ev in GetFilteredEvents())
+            {
+                <article class="glass-card event-card reveal" data-tilt>
+                    <div class="event-cover @ev.CoverClass">
+                        <span class="event-date-badge">
+                            <span class="d">@ev.Date.ToString("dd")</span>
+                            <span class="m">@ev.Date.ToString("MMM")</span>
+                        </span>
+                        <span class="event-tag">@ev.CategoryName</span>
+                    </div>
+                    <div class="event-body">
+                        <h3>@ev.Title</h3>
+                        <p class="event-loc"><span class="pin">◉</span> @ev.Location</p>
+                        <span class="event-time">@ev.Date.ToString("ddd · h:mm tt")</span>
+                        <a class="event-link" href="/events/@ev.Id">View event <span aria-hidden="true">→</span></a>
+                    </div>
+                </article>
+            }
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container-x">
+        <div style="text-align:center; max-width: 720px; margin: 0 auto 56px;">
+            <span class="eyebrow">What students say</span>
+            <h2>Loved on campuses across the country</h2>
+            <p>Early users tell us Notespack feels less like an app and more like the missing piece of campus life.</p>
+        </div>
+
+        <div class="grid-3 reveal-stagger">
+            @foreach (var testimonial in _testimonials)
+            {
+                <figure class="glass-card testi-card reveal" data-tilt>
+                    <span class="quote-mark" aria-hidden="true">"</span>
+                    <blockquote>
+                        @testimonial.Quote
+                    </blockquote>
+                    <figcaption class="testi-meta">
+                        <span class="avatar @testimonial.AvatarClass">@testimonial.Initials</span>
+                        <span class="testi-who">
+                            <span class="testi-name">@testimonial.Name</span>
+                            <span class="testi-where">@testimonial.MajorOrClub · @testimonial.University</span>
+                        </span>
+                    </figcaption>
+                </figure>
+            }
+        </div>
+    </div>
+</section>
+
+<section class="section" id="how">
+    <div class="container-x">
+        <div style="text-align:center; max-width: 720px; margin: 0 auto 56px;">
+            <span class="eyebrow">How it works</span>
+            <h2>Three steps and you're set</h2>
+        </div>
+
+        <div class="grid-3 reveal-stagger">
+            <div class="glass-card reveal" data-tilt>
+                <div class="step-num">01</div>
+                <h3>Sign in with your campus email</h3>
+                <p>One quick login and your dashboard is ready.</p>
+            </div>
+            <div class="glass-card reveal" data-tilt>
+                <div class="step-num">02</div>
+                <h3>Find or post an event</h3>
+                <p>Browse the calendar or share something you're hosting.</p>
+            </div>
+            <div class="glass-card reveal" data-tilt>
+                <div class="step-num">03</div>
+                <h3>Stay in the loop</h3>
+                <p>Track what you're attending and what you've created.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container-x">
+        <div class="cta-strip reveal">
+            <div class="blob blob-cyan blob-1"></div>
+            <div class="blob blob-violet blob-2"></div>
+            <span class="eyebrow">Ready when you are</span>
+            <h2>Make your semester easier to plan</h2>
+            <p style="max-width:560px; margin: 0 auto 28px;">Join your classmates and start organizing campus life the way it should have been from the start.</p>
+            <div class="hero-actions">
+                <a class="btn-pill btn-primary-pill" href="#">Create your account</a>
+                <a class="btn-pill btn-ghost-pill" href="#events">Browse events</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+@code {
+     // Blazor calls this every time the component renders
+    // We only want to run our JS animations on the very first render
+    // Otherwise every click on a category pill would re-run every animation
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JS.InvokeVoidAsync("notespack.initHome");
+        }
+    }
+
+    private string _selectedCategoryId = "all";
+
+    // Manejo interactivo del filtro de categorías
+    private void SelectCategory(string id)
+    {
+        _selectedCategoryId = id;
+    }
+
+    private IEnumerable<EventItem> GetFilteredEvents()
+    {
+        if (_selectedCategoryId == "all")
+            return _events;
+
+        return _events.Where(e => e.CategoryId.Equals(_selectedCategoryId, StringComparison.OrdinalIgnoreCase));
+    }
+
+    // Modelos y Datos semilla simulados (Se reemplazarán con datos de tu DB)
+    private readonly List<string> _marqueeItems = new()
+    {
+        "Music Fest", "Hackathon", "Open Mic", "Career Fair", "Movie Night", 
+        "Pickup Soccer", "Study Jam", "Art Walk", "Volunteer Day", "Game Night"
+    };
+
+    private readonly List<CategoryItem> _categories = new()
+    {
+        new("all", "All", "✦"),
+        new("music", "Music", "♪"),
+        new("tech", "Tech", "◆"),
+        new("sports", "Sports", "●"),
+        new("career", "Career", "▲"),
+        new("art", "Art", "✺"),
+        new("social", "Social", "◉"),
+        new("wellness", "Wellness", "❋"),
+        new("academic", "Academic", "⌘")
+    };
+
+    private readonly List<EventItem> _events = new()
+    {
+        new(1, "Spring Hackathon Kickoff", "Engineering Building · Room 204", new DateTime(2026, 3, 14, 19, 0, 0), "Tech", "tech", "cover-tech"),
+        new(2, "Open Mic Night", "Student Union · Main Hall", new DateTime(2026, 3, 15, 21, 0, 0), "Music", "music", "cover-music"),
+        new(3, "Resume Lab with Career Center", "Library · Study Room B", new DateTime(2026, 3, 17, 12, 0, 0), "Career", "career", "cover-career"),
+        new(4, "Intramural Soccer Finals", "South Field · Field 2", new DateTime(2026, 3, 19, 17, 30, 0), "Sports", "sports", "cover-sports"),
+        new(5, "Campus Art Walk", "Fine Arts Quad", new DateTime(2026, 3, 21, 18, 0, 0), "Art", "art", "cover-art"),
+        new(6, "International Food Fair", "Student Union · Plaza", new DateTime(2026, 3, 22, 13, 0, 0), "Social", "social", "cover-social")
+    };
+
+    private readonly List<TestimonialItem> _testimonials = new()
+    {
+        new("Notespack made it ridiculously easy to find a hackathon I would have missed otherwise. I signed up in less than a minute.", "AJ", "avatar-cyan", "Ana Jimenez", "Computer Science", "BYU Idaho"),
+        new("Posting our club's open mic took two minutes and we had a packed room. The clean design actually makes you want to use it.", "MR", "avatar-violet", "Marcus Reyes", "Music Society", "Lehigh University"),
+        new("Finally a calendar that does not feel like homework. I check Notespack more than my school email now.", "SK", "avatar-pink", "Sara Kowalski", "Pre Med", "University of Miami")
+    };
+
+    // Estructuras de datos locales
+    public record CategoryItem(string Id, string Name, string Icon);
+    public record EventItem(int Id, string Title, string Location, DateTime Date, string CategoryName, string CategoryId, string CoverClass);
+    public record TestimonialItem(string Quote, string Initials, string AvatarClass, string Name, string MajorOrClub, string University);
+}

@@ -1,0 +1,295 @@
+@page "/event/details/{EventId:int}"
+@using NOTESPACK.Models
+@using NOTESPACK.Data
+@using Microsoft.EntityFrameworkCore
+@rendermode InteractiveServer
+@inject EventContext Context
+@inject NavigationManager Navigation
+
+<div class="delete-event-page">
+    <div class="cursor-glow" id="cursorGlow"></div>
+
+    <div class="main-container">
+        <div class="page-header">
+            @if (Navigation.Uri.Contains("delete"))
+            {
+                <h1>Delete Event</h1>
+            }
+            else
+            {
+                <h1>Event Details</h1>
+            }
+        </div>
+
+        <div class="glass-card form-container tilt-card">
+            @if (EventModel == null)
+            {
+                <p class="text-white-50">Loading event data or event not found...</p>
+            }
+            else
+            {
+                <div class="hero glass-card">
+                    <img src="https://picsum.photos/id/1015/1200/600" alt="decorative image" class="hero-image" />
+                    <div class="hero-overlay"></div>
+                    <div class="hero-content">
+                        <h1>@EventModel.Title.ToUpper()</h1>
+                    </div>
+                </div>
+
+                <!-- Metadata -->
+                <div class="glass-card metadata-grid">
+                    <div class="meta-item">
+                        <div class="meta-label">Start Date</div>
+                        <div class="meta-value">@EventModel.Date.ToShortDateString()</div>
+                    </div>
+                    <div class="meta-item">
+                        <div class="meta-label">End Date</div>
+                        <div class="meta-value">@EventModel.EndDate.ToShortDateString()</div>
+                    </div>
+                    <div class="meta-item">
+                        <div class="meta-label">Duration</div>
+                        <div class="meta-value">@EventModel.Duration</div>
+                    </div>
+                </div>
+
+                <!-- Description -->
+                <div class="glass-card">
+                    <h2 class="section-title">Description</h2>
+                    <p class="description-text">
+                        @EventModel.Description
+                    </p>
+                </div>
+
+                <!-- Key Details -->
+                <div class="key-details">
+                    <div class="details-grid">
+                        <div class="glass-card detail-card tilt-card">
+                            <h4>Location</h4>
+                            <p>@EventModel.Location</p>
+                        </div>
+                        <div class="glass-card detail-card tilt-card">
+                            <h4>Organizer</h4>
+                            <p>@EventModel.Organizer</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions mt-4">
+                    <NavLink href="my-events" class="btn-cancel btn-primary text-decoration-none text-center">
+                        Back to List
+                    </NavLink>
+                    <NavLink href="@($"event/edit/{EventModel.Id}")"
+                             class="btn-submit btn-secondary text-decoration-none text-center bg-warning border-0">
+                        Edit Event
+                    </NavLink>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<style>
+    :root {
+        --cyan: #00E5FF;
+        --purple: #7B5EFF;
+    }
+
+    .event-details-page {
+        min-height: 100vh;
+        background: linear-gradient(135deg, #0A0A2A 0%, #1A0033 50%, #0A0A2A 100%);
+        color: white;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        padding: 3rem 1rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .main-container {
+        max-width: 1100px;
+        margin: 0 auto;
+    }
+
+    .cursor-glow {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(0, 229, 255, 0.25) 20%, transparent 70%);
+        pointer-events: none;
+        z-index: 99999;
+        mix-blend-mode: screen;
+        opacity: 0.7;
+        display: none;
+    }
+
+    .hero {
+        position: relative;
+        height: 280px;
+        border-radius: 24px;
+        overflow: hidden;
+        margin-bottom: 2rem;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+        border: 1px solid rgba(123, 94, 255, 0.3);
+    }
+
+    .hero-image {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .hero-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(to top, rgba(10, 10, 42, 0.92), rgba(26, 0, 51, 0.75), transparent);
+        z-index: 1;
+    }
+
+    .hero-content {
+        position: absolute;
+        bottom: 2rem;
+        left: 2rem;
+        right: 2rem;
+        z-index: 2;
+    }
+
+    .hero-content h1 {
+        font-size: clamp(2rem, 5vw, 3rem);
+        font-weight: 700;
+        color: var(--cyan);
+        text-shadow: 0 4px 15px rgba(0, 229, 255, 0.5);
+        align-content: center;
+    }
+
+    .glass-card {
+        background: rgba(26, 17, 46, 0.8);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(123, 94, 255, 0.35);
+        border-radius: 20px;
+        padding: 1.75rem;
+        margin-bottom: 1.75rem;
+        box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .glass-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 20px 40px -10px rgba(0, 229, 255, 0.15);
+    }
+
+    .metadata-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .meta-label {
+        color: var(--cyan);
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .meta-value {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-top: 0.35rem;
+    }
+
+    .section-title {
+        color: var(--cyan);
+        font-size: 1.65rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+    }
+
+    .details-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .action-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        justify-content: center;
+        padding: 1rem 0;
+    }
+
+    .btn-primary,
+    .btn-secondary {
+        padding: 1rem 2.25rem;
+        border-radius: 9999px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        flex: 1;
+        max-width: 220px;
+    }
+
+    .btn-primary {
+        background: linear-gradient(to right, var(--cyan), var(--purple));
+        color: #000;
+        border: none;
+        margin-right: 15px;
+    }
+
+    .btn-secondary {
+        background: transparent;
+        border: 1px solid rgba(123, 94, 255, 0.6);
+        color: white;
+    }
+
+    button:focus,
+    input:focus,
+    textarea:focus {
+        outline: 3px solid var(--cyan);
+        outline-offset: 4px;
+    }
+
+    .tilt-card {
+        transition: transform 0.1s ease, box-shadow 0.1s ease;
+    }
+
+    @@media (pointer: fine) {
+        .cursor-glow {
+            display: block;
+        }
+    }
+
+    @@media (max-width: 720px) {
+        .metadata-grid {
+            grid-template-columns: 1fr 1fr;
+        }
+    }
+
+    @@media (max-width: 480px) {
+        .event-details-page {
+            padding: 1.5rem 1rem;
+        }
+
+        .action-buttons {
+            flex-direction: column;
+        }
+
+        .btn-primary,
+        .btn-secondary {
+            max-width: none;
+        }
+    }
+</style>
+
+@code {
+    [Parameter] public int EventId { get; set; }
+    private Event? EventModel { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        EventModel = await Context.Events.FirstOrDefaultAsync(e => e.Id == EventId);
+    }
+}

@@ -1,0 +1,449 @@
+:root {
+    --cyan: #00E5FF;
+    --purple: #7B5EFF;
+}
+
+.register-page-layout {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 3rem;
+    flex-wrap: wrap;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+/* el card ya no debe estirarse a lo ancho del layout */
+.register-page-layout > .glass-card.form-container {
+    flex: 0 0 auto;
+    width: 100%;
+    max-width: 480px;
+    margin: 0; /* ya no necesita margin:auto, lo centra el flex del padre */
+}
+
+.password-requirements-panel {
+    flex: 1 1 260px;
+    max-width: 320px;
+    text-align: left;
+    color: var(--text-dim, #9aa3c4);
+    font-size: 1rem;
+    line-height: 1.6;
+    padding-top: 10%; /* used to align vertically the content*/
+}
+
+.password-requirements-panel ol {
+    padding-left: 1.2rem;
+    margin: 0;
+}
+
+.password-requirements-panel li {
+    margin-bottom: 0.5rem;
+}
+
+button{
+    border: none;
+    background: none;
+    cursor: pointer;
+}
+
+.gen-form-page {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #0A0A2A 0%, #1A0033 50%, #0A0A2A 100%);
+    color: white;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    padding: 3rem 1rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.main-container {
+    max-width: 780px;
+    margin: 0 auto;
+}
+
+.page-header h1 {
+    font-size: clamp(2rem, 5vw, 2.75rem);
+    font-weight: 700;
+    color: var(--cyan);
+    text-align: center;
+    margin-bottom: 2rem;
+    text-shadow: 0 4px 12px rgba(0, 229, 255, 0.2);
+}
+
+.cursor-glow {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(0, 229, 255, 0.25) 20%, transparent 70%);
+    pointer-events: none;
+    z-index: 99999;
+    mix-blend-mode: screen;
+    opacity: 0.7;
+    display: none;
+}
+
+.glass-card {
+    background: rgba(26, 17, 46, 0.8);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(123, 94, 255, 0.4);
+    border-radius: 24px;
+    padding: 2.5rem;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.glass-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 25px 50px -10px rgba(0, 229, 255, 0.15);
+}
+
+.form-group {
+    position: relative;
+    margin-bottom: 1.5rem;
+}
+
+.form-input {
+    width: 100%;
+    padding-right: 40px;
+}
+::deep .eye-btn {
+    top: auto !important;
+    bottom: 0.9rem !important;
+    transform: none !important;
+}
+
+.eye-btn {
+    position: relative;
+    top: 50%;
+    right: 10px;
+
+    background: transparent;
+    border: none;
+    padding: 0;
+    margin: 0;
+    color: white;  
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.form-label {
+    display: block;
+    color: var(--cyan);
+    font-size: 0.95rem;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+::deep .form-input,
+::deep .form-textarea {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(123, 94, 255, 0.35);
+    border-radius: 12px;
+    padding: 0.9rem 1.1rem;
+    color: white;
+    font-size: 1.05rem;
+    transition: all 0.2s ease;
+}
+
+
+.form-header {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--cyan);
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.eye-btn {
+    background: transparent;
+    border: none;
+    padding: 0;
+    margin: 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.form-header {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--cyan);
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.form-header h2:focus {
+    outline: none;
+}
+
+.form-header h1,
+.form-header h2 {
+    line-height: 1.25;
+}
+
+.form-input,
+.form-textarea {
+    line-height: 1.4;
+}
+
+p, .text-danger, .validation-message, .form-message-slot {
+    line-height: 1.5;
+}
+
+::deep .form-input:focus,
+::deep .form-textarea:focus {
+    outline: 3px solid var(--cyan);
+    outline-offset: 4px;
+    border-color: var(--cyan);
+}
+
+.form-textarea {
+    resize: vertical;
+    min-height: 140px;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.25rem;
+}
+
+.form-container{
+    max-width: 480px;
+    margin: 0 auto;
+}
+
+.location-input {
+    position: relative;
+}
+
+.location-input .map-icon {
+    position: absolute;
+    right: 1.1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.5rem;
+    color: var(--cyan);
+    pointer-events: none;
+}
+
+.toggle-input {
+    display: none;
+}
+
+.action-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 2rem;
+}
+
+.btn-primary,
+.btn-secondary,
+.btn-danger {
+    padding: 1rem 2.25rem;
+    border-radius: 9999px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    flex: 1;
+    min-width: 160px;
+}
+
+.btn-primary {
+    background: linear-gradient(to right, var(--cyan), var(--purple));
+    color: #fff !important;
+    border: 1px solid rgba(123, 94, 255, 0.6);
+}
+
+.btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(0, 229, 255, 0.4);
+}
+
+.btn-secondary {
+    text-align: center;
+    background: transparent;
+    border: 1px solid rgba(123, 94, 255, 0.6);
+    color: white;
+}
+
+.btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: var(--cyan);
+}
+
+.btn-danger {
+    background: transparent;
+    border: 1px solid #EF4444;
+    color: #FCA5A5;
+}
+
+.btn-danger:hover {
+    background: #EF4444;
+    color: white;
+}
+
+.tilt-card {
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+button:focus,
+input:focus,
+textarea:focus {
+    outline: 3px solid var(--cyan);
+    outline-offset: 4px;
+}
+
+@media (pointer: fine) {
+    .cursor-glow {
+        display: block;
+    }
+}
+
+@media (max-width: 900px) {
+    .glass-card {
+        padding: 2rem;
+    }
+}
+
+@media (max-width: 640px) {
+    .edit-event-page {
+        padding: 1.5rem 1rem;
+    }
+
+    .action-buttons {
+        flex-direction: column;
+    }
+
+    .tickets-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+}
+
+@media (max-width: 800px) {
+    .register-page-layout {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .password-requirements-panel {
+        max-width: 480px;
+        padding-top: 0;
+        text-align: left;
+    }
+}
+
+/**
+ * Blazor validations UI styles
+ */
+
+ .validation-message {
+    color: #ff5c5c;
+    font-size: 0.85rem;
+    margin-top: 0.4rem;
+    display: block;
+}
+::deep .validation-message {
+    display: block;
+    min-height: 1.2rem;   /* reserva espacio fijo bajo cada input */
+    margin-top: 0.35rem;
+    font-size: 0.85rem;
+    line-height: 1.4;
+}
+
+.form-message-slot {
+    min-height: 1.4rem;      /* antes: 3rem. Ahora solo reserva una línea de texto */
+    margin-bottom: 0.75rem;  /* antes: 1rem */
+    text-align: center;
+    font-size: 0.9rem;
+    line-height: 1.4;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+
+.form-message-success,
+.form-message-error {
+    min-height: 2.5rem;      /* el tamaño completo solo aplica cuando SÍ hay contenido */
+    padding: 0.65rem 1rem;
+}
+
+.form-message-success {
+    color: #2ec4b6;
+    background: rgba(46, 196, 182, 0.12);
+    border: 1px solid rgba(46, 196, 182, 0.35);
+}
+
+.form-message-error {
+    color: #ff6b6b;
+    background: rgba(255, 107, 107, 0.12);
+    border: 1px solid rgba(255, 107, 107, 0.35);
+    font-weight: 600;
+}
+
+/* En Login.razor.css y Register.razor.css */
+.text-danger,
+.form-message-error,
+.validation-message {
+    font-weight: 600;   /* los errores deben resaltar más que el texto normal */
+}
+
+.forgot-password-link a,
+.form-container p a {
+    font-style: italic;      /* diferencia visual respecto al texto de error */
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.forgot-password-link a:hover,
+.form-container p a:hover {
+    text-decoration: underline;
+}
+
+.text-danger,
+.form-message-error,
+.validation-message {
+    color: #FF6B6B;   /* un poco más claro que #ff5c5c, mejora legibilidad sobre fondo oscuro */
+}
+
+.form-group {
+    margin-bottom: 1.5rem;   /* ya existe la propiedad, se usa como única fuente de espaciado */
+}
+
+.password-requirements-panel {
+    line-height: 1.7;   /* sube de 1.6 a 1.7 para lista más respirada */
+}
+
+.password-requirements-panel li {
+    margin-bottom: 0.65rem;
+}
+
+.password-requirements-panel li::marker {
+    color: var(--cyan);
+    font-weight: 700;
+}
+
+@keyframes np-fade-in {
+    from { opacity: 0; transform: translateY(-4px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.text-danger,
+.validation-message,
+.form-message-error,
+.form-message-success {
+    animation: np-fade-in 0.25s ease;
+}

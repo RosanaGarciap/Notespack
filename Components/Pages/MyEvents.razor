@@ -1,0 +1,91 @@
+@page "/my-events"
+@using NOTESPACK.Models
+@using NOTESPACK.Services
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.EntityFrameworkCore
+@rendermode InteractiveServer
+@inject IDbContextFactory<NOTESPACK.Data.EventContext> DbFactory
+@inject EventService EventService
+@inject AuthenticationStateProvider AuthStateProvider
+@inject NavigationManager Navigation
+
+<PageTitle>My Events · Notespack</PageTitle>
+
+<section class="events-section">
+    <div class="container-x">
+        <div class="events-header">
+            <div>
+                <span class="eyebrow">Your Schedule</span>
+                <h2>Personal & Campus Events</h2>
+            </div>
+
+            <a href="/event/create" class="btn-primary">
+                + Create New Event
+            </a>
+        </div>
+
+        @if (AllEvents == null) {
+            <div class="loading-state"><p>Loading your events...</p></div>
+        }
+        else if (!AllEvents.Any()) {
+            <div class="glass-card">
+                <h3>All clear!</h3>
+                <p>You don't have any events scheduled yet. It's a great time to plan something!</p>
+            </div>
+        }
+        else {
+            <div class="grid-3">
+                @foreach (var item in AllEvents) {
+                    bool isCampus = item.UserId == 0;
+                    <EventCard EventItem="item">
+                        <HeaderActions>
+                            @if (!isCampus) {
+                                <button @onclick="() => ConfirmDelete(item.Id)" class="btnDeleteEvent" title="Delete">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="1.5em" height="1.5em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="3 6 5 6 21 6"></polyline>
+                                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                    </svg> 
+                                </button>
+                            }
+                        </HeaderActions>
+                        <FooterActions>
+                            <a href="/event/edit/@item.Id" class="btn btn-warning">Edit</a>
+                            <a href="/event/details/@item.Id" class="btn btn-info">View Details</a>
+                        </FooterActions>
+                    </EventCard>
+                }
+            </div>
+        }
+    </div>
+</section>
+
+@code {
+    private List<Event>? AllEvents { get; set; }
+        protected override async Task OnInitializedAsync()
+    {
+        await LoadEvents();
+    }
+
+    protected async Task LoadEvents()
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var userIdString = authState.User.FindFirst("UserId")?.Value;
+
+        if (int.TryParse(userIdString, out int userId))
+        {
+            AllEvents = await EventService.GetEventsByUserIdAsync(userId);
+            StateHasChanged();
+        }
+        else
+        {
+            AllEvents = new List<Event>();
+        }
+    }
+
+    // Método de navegación para el borrado
+    private void ConfirmDelete(int id) 
+    {
+        Console.WriteLine($"DEBUG: Intentando borrar evento ID: {id}");
+        Navigation.NavigateTo($"/event/delete/{id}");
+    }
+}

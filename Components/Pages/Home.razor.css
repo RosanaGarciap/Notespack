@@ -1,0 +1,90 @@
+/* ==========================================================================
+   SOBREESCRITURA COMPLETA DE RADZEN PARA LA ESTÉTICA GLASS DE NOTESPACK
+   ========================================================================== */
+
+:root {
+    /* Forzamos las variables del framework a usar los colores de tu UI */
+    --rz-scheduler-background-color: rgba(255, 255, 255, 0.02) !important;
+    --rz-scheduler-border: 1px solid rgba(255, 255, 255, 0.06) !important;
+    --rz-scheduler-header-background-color: transparent !important;
+    --rz-scheduler-title-color: #ffffff !important;
+    --rz-scheduler-view-header-background-color: transparent !important;
+    --rz-scheduler-view-header-color: rgba(255, 255, 255, 0.5) !important;
+    
+    /* Configuración de las Celdas (Slots) */
+    --rz-scheduler-slot-border: 1px solid rgba(255, 255, 255, 0.04) !important;
+    --rz-scheduler-slot-title-color: rgba(255, 255, 255, 0.8) !important;
+    --rz-scheduler-other-month-background-color: transparent !important;
+    
+    /* Botones de Navegación */
+    --rz-button-background-color: rgba(255, 255, 255, 0.06) !important;
+    --rz-button-color: #ffffff !important;
+    --rz-button-border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Contenedor envolvente del Calendario con Glassmorphism */
+.calendar-wrapper {
+    background: rgba(255, 255, 255, 0.02) !important;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-radius: 24px;
+    padding: 24px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    margin-top: 16px;
+}
+
+/* Modificación estructural sobre los botones internos */
+.rz-scheduler .rz-button {
+    border-radius: 20px !important;
+    text-transform: capitalize !important;
+    font-size: 0.85rem !important;
+    padding: 4px 14px !important;
+    transition: all 0.2s ease !important;
+}
+
+.rz-scheduler .rz-button:hover {
+    background: rgba(255, 255, 255, 0.12) !important;
+    border-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+/* Botón activo (Estado seleccionado) */
+.rz-scheduler .rz-state-active, 
+.rz-scheduler .rz-button.rz-state-active {
+    background: #ffffff !important;
+    color: #000000 !important;
+    border-color: #ffffff !important;
+    font-weight: 600 !important;
+}
+
+/* Texto de los días de la semana */
+.rz-view-header th {
+    text-transform: uppercase !important;
+    font-size: 0.75rem !important;
+    letter-spacing: 0.05em !important;
+    font-weight: 600 !important;
+    padding: 12px 0 !important;
+}
+
+/* Hover interactivo sobre cada casilla del calendario */
+.rz-slot:hover {
+    background: rgba(255, 255, 255, 0.02) !important;
+}
+
+/* Atenuación para los días del mes anterior/siguiente */
+.rz-other-month .rz-slot-title {
+    opacity: 0.3 !important;
+}
+
+/* Estilo premium e idéntico para tus eventos dentro de la cuadrícula */
+.rz-scheduler .rz-event {
+    background: linear-gradient(135deg, #a855f7 0%, #7c3aed 100%) !important;
+    border: none !important;
+    border-radius: 8px !important;
+    color: #ffffff !important;
+    padding: 4px 8px !important;
+    font-size: 0.8rem !important;
+    font-weight: 600 !important;
+    box-shadow: 0 4px 12px rgba(168, 85, 247, 0.2) !important;
+    margin: 2px 4px !important;
+}

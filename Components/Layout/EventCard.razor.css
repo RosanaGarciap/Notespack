@@ -1,0 +1,116 @@
+:root {
+    --cyan: #00E5FF;
+    --purple: #7B5EFF;
+}
+
+/* --- Contenedor de la tarjeta: mismo lenguaje visual que .glass-card de Login/Register --- */
+.event-card {
+    background: rgba(26, 17, 46, 0.8);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(123, 94, 255, 0.4);
+    border-radius: 24px;
+    overflow: hidden; /* recorta la portada para que respete las esquinas redondeadas */
+    display: flex;
+    flex-direction: column;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    color: white;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.event-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 25px 50px -10px rgba(0, 229, 255, 0.15);
+}
+
+/* --- Zona de acciones opcional sobre la portada (HeaderActions) --- */
+.event-header-actions {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    z-index: 2;
+    display: flex;
+    gap: 0.5rem;
+}
+
+/* --- Portada: como no hay imagen real, se simula con un degradado suave (igual a la captura) --- */
+.event-cover {
+    position: relative;
+    height: 160px;
+    background:
+        radial-gradient(circle at 30% 20%, rgba(123, 94, 255, 0.25), transparent 60%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.06) 0%, rgba(0, 0, 0, 0.25) 100%);
+}
+
+/* --- Insignia de fecha: superpuesta sobre la portada, esquina superior izquierda --- */
+.event-date-badge {
+    position: absolute;
+    top: 0.9rem;
+    left: 0.9rem;
+    background: rgba(10, 10, 30, 0.75);
+    border: 1px solid rgba(123, 94, 255, 0.4);
+    border-radius: 12px;
+    padding: 0.4rem 0.75rem;
+    text-align: center;
+    line-height: 1.2;
+}
+
+.event-date-badge .d {
+    display: block;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: white;
+}
+
+.event-date-badge .m {
+    display: block;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--cyan);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* --- Cuerpo: título, ubicación, descripción, con el mismo ritmo vertical --- */
+.event-body {
+    padding: 1.25rem 1.25rem 0.5rem 1.25rem;
+    flex: 1; /* empuja el footer hacia abajo aunque el texto sea corto */
+}
+
+.event-body h3 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: white;
+    line-height: 1.3;
+    margin: 0 0 0.5rem 0;
+}
+
+.card-loc-text {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.65);
+    margin: 0 0 0.6rem 0;
+}
+
+.card-loc-text .pin {
+    color: var(--cyan);
+    font-size: 0.8rem;
+}
+
+.card-desc-text {
+    font-size: 0.9rem;
+    color: #a0aec0;
+    line-height: 1.5;
+    margin: 0;
+}
+
+/* --- Footer: separado del cuerpo con una línea sutil, mismo padding lateral que el body --- */
+.event-footer {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 1rem 1.25rem 1.25rem 1.25rem;
+    margin-top: 0.75rem;
+    border-top: 1px solid rgba(123, 94, 255, 0.2);
+}

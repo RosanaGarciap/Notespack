@@ -1,0 +1,32 @@
+@rendermode InteractiveServer
+@inject IJSRuntime JS
+@implements IAsyncDisposable
+
+@code {
+    // Minutos de inactividad permitidos. Cambiar solo este número a 15 más adelante.
+    private const int Var_InactivityLimitMinutes = 2;
+    private IJSObjectReference? Var_IdleWatcherModule;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            Var_IdleWatcherModule = await JS.InvokeAsync<IJSObjectReference>(
+                "import", "./js/idle-session-watcher.js");
+            await Var_IdleWatcherModule.InvokeVoidAsync("Var_StartIdleWatcher", Var_InactivityLimitMinutes);
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (Var_IdleWatcherModule is not null)
+        {
+            try
+            {
+                await Var_IdleWatcherModule.InvokeVoidAsync("Var_StopIdleWatcher");
+                await Var_IdleWatcherModule.DisposeAsync();
+            }
+            catch (JSDisconnectedException) { /* el circuito ya se cerró */ }
+        }
+    }
+}

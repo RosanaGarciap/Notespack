@@ -1,0 +1,139 @@
+:root {
+    --cyan: #00E5FF;
+    --purple: #7B5EFF;
+}
+
+section.events-section {
+    padding: 2em;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    color: white;
+}
+
+.event-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 20px;
+}
+
+.card-desc-text {
+    font-size: 0.9rem;
+    color: #a0aec0;
+    margin-top: 0.5rem;
+    line-height: 1.5;
+}
+
+.events-header {
+    margin: 0 0 1.5em 0;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.events-header h2 {
+    color: var(--cyan);
+    font-weight: 700;
+    font-size: clamp(1.6rem, 4vw, 2.1rem);
+    margin: 0.25rem 0 0 0;
+    line-height: 1.25;
+}
+
+.events-header .eyebrow {
+    color: rgba(255, 255, 255, 0.55);
+    text-transform: uppercase;
+    font-size: 0.78rem;
+    letter-spacing: 1px;
+    font-weight: 500;
+}
+
+.filters {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.filters .form-control {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(123, 94, 255, 0.35);
+    border-radius: 10px;
+    color: white;
+    padding: 0.55rem 0.9rem;
+    font-size: 0.9rem;
+    font-family: inherit;
+    transition: all 0.2s ease;
+}
+
+.filters select.form-control {
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%2300E5FF' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.9rem center;
+    padding-right: 2.2rem;
+}
+
+.filters input.form-control {
+    width: 100px;
+}
+
+.filters .form-control:focus {
+    outline: 3px solid var(--cyan);
+    outline-offset: 2px;
+    border-color: var(--cyan);
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem 1.1rem;
+    border-radius: 9999px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: all 0.25s ease;
+    border: 1px solid rgba(123, 94, 255, 0.6);
+}
+
+.btn + .btn {
+    margin-left: 0.6rem;
+}
+
+/* "View Details" -> equivalente a .btn-secondary (outline) */
+.btn-info {
+    background: transparent;
+    color: white;
+}
+
+.btn-info:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: var(--cyan);
+}
+
+.btn-success {
+    background: linear-gradient(to right, var(--cyan), var(--purple));
+    color: #fff !important;
+}
+
+.btn-success:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 18px rgba(0, 229, 255, 0.35);
+}
+
+.btn:focus {
+    outline: 3px solid var(--cyan);
+    outline-offset: 3px;
+}
+
+.glass-card {
+    background: rgba(26, 17, 46, 0.8);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(123, 94, 255, 0.4);
+    border-radius: 24px;
+    padding: 2rem;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.75);
+}
