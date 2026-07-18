@@ -56,62 +56,93 @@ namespace NOTESPACK.Services
         private async Task SyncEventsAsync()
         {
             using var client = _httpClientFactory.CreateClient();
-            var response = await client.GetAsync("https://calendar.byu.edu/api/Events.json?categories=all"); 
-            
-            if (!response.IsSuccessStatusCode) return;
 
-            var jsonString = await response.Content.ReadAsStringAsync();
-            using var jsonDoc = JsonDocument.Parse(jsonString);
+            // Header agregado: muchas APIs universitarias rechazan silenciosamente
+            // peticiones que no incluyan un User-Agent de "navegador".
+            client.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (compatible; Notespack/1.0; +https://notespack.azurewebsites.net)");
+            client.DefaultRequestHeaders.Accept.ParseAdd("application/json");
 
-            using var context = _contextFactory.CreateDbContext();
+            Console.WriteLine("CampusEventSyncService: iniciando sincronización...");
 
-            // 1. Fetch existing events into a HashSet for O(1) lookup
-            // Using a tuple of (Title, Date) as the key
-            var existingEvents = await context.Events
-                .Select(e => new { e.Title, Date = e.Date.Date })
-                .ToListAsync();
-            
-            var existingLookup = new HashSet<(string Title, DateTime Date)>(
-                existingEvents.Select(e => (e.Title, e.Date))
-            );
+            var response = await client.GetAsync("https://calendar.byu.edu/api/Events.json?categories=all");
 
-            var newEvents = new List<Event>();
-
-            foreach (var element in jsonDoc.RootElement.EnumerateArray())
+            if (!response.IsSuccessStatusCode)
             {
-                string title = element.TryGetProperty("Title", out var t) ? t.GetString() ?? "No Title" : "No Title";
-                DateTime eventDate = DateTime.Today;
-                if (element.TryGetProperty("StartDateTime", out var sd))
-                {
-                    DateTime.TryParse(sd.GetString(), out eventDate);
-                }
-
-                // 2. Check in memory instead of querying the database
-                if (!existingLookup.Contains((title, eventDate.Date)))
-                {
-                    newEvents.Add(new Event
-                    {
-                        Title = title,
-                        Description = element.TryGetProperty("Description", out var d) ? d.GetString() ?? "" : "",
-                        Date = eventDate.Date,
-                        Location = element.TryGetProperty("LocationName", out var a) ? a.GetString() ?? "Unknown" : "Unknown",
-                        UserId = null,
-                        EndDate = eventDate.Date, 
-                        Duration = "TBD",
-                        Organizer = "BYU Calendar"
-                    });
-                    
-                    // Mark as added so we don't try to add it again if the JSON contains duplicates
-                    existingLookup.Add((title, eventDate.Date));
-                }
+                // Antes esto fallaba en silencio total. Ahora queda registrado
+                // el código de estado y la razón exactos en el Log Stream.
+                Console.WriteLine($"CampusEventSyncService: sync falló. StatusCode={(int)response.StatusCode} ({response.StatusCode}), Reason='{response.ReasonPhrase}'");
+                return;
             }
 
-            // 3. Batch insert new records
-            if (newEvents.Any())
+            var jsonString = await response.Content.ReadAsStringAsync();
+
+            JsonDocument jsonDoc;
+            try
             {
-                await context.Events.AddRangeAsync(newEvents);
-                await context.SaveChangesAsync();
-                Console.WriteLine($"Guardados {newEvents.Count} nuevos eventos.");
+                jsonDoc = JsonDocument.Parse(jsonString);
+            }
+            catch (JsonException jex)
+            {
+                Console.WriteLine($"CampusEventSyncService: la respuesta no es JSON válido. Error: {jex.Message}. Primeros 200 caracteres: {jsonString[..Math.Min(200, jsonString.Length)]}");
+                return;
+            }
+
+            using (jsonDoc)
+            {
+                using var context = _contextFactory.CreateDbContext();
+
+                // 1. Fetch existing events into a HashSet for O(1) lookup
+                // Using a tuple of (Title, Date) as the key
+                var existingEvents = await context.Events
+                    .Select(e => new { e.Title, Date = e.Date.Date })
+                    .ToListAsync();
+
+                var existingLookup = new HashSet<(string Title, DateTime Date)>(
+                    existingEvents.Select(e => (e.Title, e.Date))
+                );
+
+                var newEvents = new List<Event>();
+
+                foreach (var element in jsonDoc.RootElement.EnumerateArray())
+                {
+                    string title = element.TryGetProperty("Title", out var t) ? t.GetString() ?? "No Title" : "No Title";
+                    DateTime eventDate = DateTime.Today;
+                    if (element.TryGetProperty("StartDateTime", out var sd))
+                    {
+                        DateTime.TryParse(sd.GetString(), out eventDate);
+                    }
+
+                    // 2. Check in memory instead of querying the database
+                    if (!existingLookup.Contains((title, eventDate.Date)))
+                    {
+                        newEvents.Add(new Event
+                        {
+                            Title = title,
+                            Description = element.TryGetProperty("Description", out var d) ? d.GetString() ?? "" : "",
+                            Date = eventDate.Date,
+                            Location = element.TryGetProperty("LocationName", out var a) ? a.GetString() ?? "Unknown" : "Unknown",
+                            UserId = null,
+                            EndDate = eventDate.Date,
+                            Duration = "TBD",
+                            Organizer = "BYU Calendar"
+                        });
+
+                        // Mark as added so we don't try to add it again if the JSON contains duplicates
+                        existingLookup.Add((title, eventDate.Date));
+                    }
+                }
+
+                // 3. Batch insert new records
+                if (newEvents.Any())
+                {
+                    await context.Events.AddRangeAsync(newEvents);
+                    await context.SaveChangesAsync();
+                    Console.WriteLine($"Guardados {newEvents.Count} nuevos eventos.");
+                }
+                else
+                {
+                    Console.WriteLine("CampusEventSyncService: sync completado, 0 eventos nuevos (todos ya existían).");
+                }
             }
         }
         public Task StopAsync(CancellationToken cancellationToken)
