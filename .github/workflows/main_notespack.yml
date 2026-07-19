@@ -52,4 +52,4 @@ jobs:
           app-name: 'Notespack'
           slot-name: 'Production'
           package: .
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_673AD08C592E40FC9478A6F74E44A5DF }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_9ABF253B81374FF892C32CEBD035E879 }}
